@@ -89,7 +89,6 @@ export const updatePemesanan = async(req, res) =>{
                 jenis_kustom,
                 perkiraan_harga,
                 nomor_telepon_pelanggan,
-                selesai,
             },{
                 where:{
                     id: pemesanan.id
@@ -102,7 +101,6 @@ export const updatePemesanan = async(req, res) =>{
                 jenis_kustom,
                 perkiraan_harga,
                 nomor_telepon_pelanggan,
-                selesai,
             },{
                 where:{
                     id: pemesanan.id

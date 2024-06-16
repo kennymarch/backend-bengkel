@@ -28,6 +28,10 @@ const KustomSelesai = db.define("kustom_selesai", {
     validate:{
         notEmpty: true,
         len: [3, 100]
+    },
+    references: {
+        model: Pemesanan,
+        key: 'nama_pemesan'
     }
   },
   harga_akhir: {
@@ -51,13 +55,13 @@ const KustomSelesai = db.define("kustom_selesai", {
         notEmpty: true
     }
     },
-    url: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: true
-        }
-    },
+  url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate:{
+          notEmpty: true
+      }
+  },
   userId:{
       type: DataTypes.INTEGER,
       allowNull: false,

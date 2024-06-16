@@ -8,6 +8,7 @@ import SequelizeStore from "connect-session-sequelize";
 import UserRoute from "./routes/UserRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
 import PemesananRoute from "./routes/PemesananRoute.js";
+import KustomSelesaiRoute from "./routes/KustomSelesaiRoute.js";
 
 dotenv.config();
 
@@ -19,9 +20,9 @@ const store = new sessionStore({
   db: db,
 });
 
-// (async () => {
-//   await db.sync();
-// })();
+(async () => {
+  await db.sync();
+})();
 
 app.use(
   session({
@@ -47,6 +48,7 @@ app.use(express.static("public"));
 app.use(UserRoute);
 app.use(AuthRoute);
 app.use(PemesananRoute);
+app.use(KustomSelesaiRoute);
 
 // store.sync();
 
