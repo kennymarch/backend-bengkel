@@ -59,6 +59,6 @@ const Pemesanan = db.define('pemesanan',{
 });
 
 Users.hasMany(Pemesanan);
-Pemesanan.belongsTo(Users, {foreignKey: 'userId'});
+Pemesanan.belongsTo(Users, { foreignKey: 'userId', onDelete: "CASCADE" });
 
 export default Pemesanan;

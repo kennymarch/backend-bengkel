@@ -19,7 +19,7 @@ export const getUserById = async(req, res) =>{
         const response = await User.findOne({
             attributes:['uuid','name','email','role', 'image', 'url'],
             where: {
-                uuid: req.params.id
+                uuid: req.params.uuid
             }
         });
         res.status(200).json(response);
@@ -68,7 +68,7 @@ export const createUser = async(req, res) =>{
 export const updateUser = async(req, res) =>{
     const user = await User.findOne({
         where: {
-            uuid: req.params.id
+            uuid: req.params.uuid
         }
     });
     if(!user) return res.status(404).json({msg: "User tidak ditemukan"});
@@ -136,7 +136,7 @@ export const updateUser = async(req, res) =>{
 export const deleteUser = async(req, res) =>{
     const user = await User.findOne({
         where: {
-            uuid: req.params.id
+            uuid: req.params.uuid
         }
     });
     if(!user) return res.status(404).json({msg: "User tidak ditemukan"});

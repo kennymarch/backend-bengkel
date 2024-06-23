@@ -2,6 +2,8 @@ import KustomSelesai from "../models/KustomSelesaiModel.js";
 import Pemesanan from "../models/PemesananModel.js";
 import User from "../models/UserModel.js";
 import {Op} from "sequelize";
+import path from "path";
+import fs from "fs";
 
 export const getKustomSelesai = async (req, res) =>{
     try {
@@ -91,9 +93,11 @@ export const createKustomSelesai = async(req, res) =>{
         if(req.files === null ) return res.status(400).json({msg: 'Tidak ada file gambar yang diuploud. Silahkan uploud file gambar terlebih dahulu'})
 
         const harga_akhir = req.body.harga_akhir;
-        const uuid = req.body.uuid;
-        const estimasi_pengerjaan = req.body.estimasi_pengerjaan;
+        const pemesananUuid = req.body.pemesananUuid;
         const file = req.files.file;
+        const tanggal_selesai = req.body.tanggal_selesai;
+        // const dateNow = new Date.now()
+        
 
         const fileSize = file.data.length;
         const ext = path.extname(file.name);
@@ -107,14 +111,14 @@ export const createKustomSelesai = async(req, res) =>{
 
         const pemesanan = await Pemesanan.findOne({
             where: {
-                uuid: uuid
+                uuid: pemesananUuid
             }
         });
         if(!pemesanan) return res.status(404).json({msg: "Data produk tidak ditemukan!"})
     
         await KustomSelesai.create({
             harga_akhir,
-            estimasi_pengerjaan,
+            tanggal_selesai,
             image: fileName,
             url: url,
             userId: req.userId,
@@ -125,7 +129,8 @@ export const createKustomSelesai = async(req, res) =>{
                 uuid: pemesanan.uuid
             }
         });
-        res.status(201).json({msg: "Barang masuk berhasil ditambahkan"})
+        file.mv(`./public/images/hasil-kustom/${fileName}`)
+        res.status(201).json({msg: "Data kustom selesai berhasil ditambahkan"})
     } catch (error) {
         res.status(500).json({msg: error.message});
     }
@@ -140,18 +145,13 @@ export const updateKustomSelesai = async(req, res) =>{
         });
         if(!kustomSelesai) return res.status(404).json({msg: "Data tidak ditemukan"});
         
-        // const name = req.body.title;
-        // const typeProduct = req.body.type;
-        // const brand = req.body.brand;
-        // const quantity = req.body.quantites;
         const harga_akhir = req.body.harga_akhir;
         const uuid = req.body.uuid;
-        const estimasi_pengerjaan = req.body.estimasi_pengerjaan;
-        const file = req.files.file;
+        const tanggal_selesai = req.body.tanggal_selesai;
 
         let fileName = "";
         if(req.files === null) {
-            fileName = product.image;
+            fileName = kustomSelesai.image;
         } else {
             const file = req.files.file;
             const fileSize = file.data.length;
@@ -161,7 +161,7 @@ export const updateKustomSelesai = async(req, res) =>{
 
             if(!allowedType.includes(ext.toLowerCase())) return res.status(422).json({msg: "Gambar tidak sesuai!"});
             if(fileSize > 20000000) return res.status(422).json({msg: "Gambar harus lebih kecil dari 20MB"});
-            const filePath = `./public/images/hasil-kustom/${product.image}`;
+            const filePath = `./public/images/hasil-kustom/${kustomSelesai.image}`;
             fs.unlinkSync(filePath);
             file.mv(`./public/images/hasil-kustom/${fileName}`);
         }
@@ -172,7 +172,7 @@ export const updateKustomSelesai = async(req, res) =>{
         if(req.role === "admin"){
             await KustomSelesai.update({
                 harga_akhir,
-                estimasi_pengerjaan,
+                tanggal_selesai,
             },{
                 where:{
                     id: kustomSelesai.id
@@ -188,7 +188,7 @@ export const updateKustomSelesai = async(req, res) =>{
             if(req.userId !== kustomSelesai.userId) return res.status(403).json({msg: "Akses terlarang"});
             await KustomSelesai.update({
                 harga_akhir,
-                estimasi_pengerjaan,
+                tanggal_selesai,
             },{
                 where:{
                     [Op.and]:[{id: kustomSelesai.id}, {userId: req.userId}]
@@ -201,9 +201,9 @@ export const updateKustomSelesai = async(req, res) =>{
                 }
             });
         }
-        res.status(200).json({msg: "Barang masuk berhasil diperbarui"});
+        res.status(200).json({msg: "Kustom selesai berhasil diperbarui"});
     } catch (error) {
-        res.status(500).json({msg: "Pastikan semua data terisi dengan benar dan tidak ada yang kosong. Mohon periksa kembali!"});
+        res.status(500).json({msg: error.message});
     }
 }
 
@@ -216,7 +216,7 @@ export const deleteKustomSelesai = async(req, res) =>{
         });
         if(!kustomSelesai) return res.status(404).json({msg: "Data tidak ditemukan"});
 
-        const filePath = `./public/images/hasil-kustom/${product.image}`
+        const filePath = `./public/images/hasil-kustom/${kustomSelesai.image}`
         fs.unlinkSync(filePath);
         
         const pemesanan = await Pemesanan.findOne({
@@ -247,7 +247,7 @@ export const deleteKustomSelesai = async(req, res) =>{
             }
         })
 
-        res.status(200).json({msg: "Barang masuk berhasil dihapus"});
+        res.status(200).json({msg: "Data berhasil dihapus"});
     } catch (error) {
         res.status(500).json({msg: error.message});
     }

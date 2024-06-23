@@ -14,26 +14,6 @@ const KustomSelesai = db.define("kustom_selesai", {
         notEmpty: true
     }
   },
-  pemesananUuid: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    references: {
-        model: Pemesanan,
-        key: 'uuid'
-    }
-  },
-  nama_pemesan: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate:{
-        notEmpty: true,
-        len: [3, 100]
-    },
-    references: {
-        model: Pemesanan,
-        key: 'nama_pemesan'
-    }
-  },
   harga_akhir: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -41,8 +21,8 @@ const KustomSelesai = db.define("kustom_selesai", {
         notEmpty: true
     }
   },
-  estimasi_pengerjaan: {
-    type: DataTypes.INTEGER,
+  tanggal_selesai: {
+    type: DataTypes.DATE,
     allowNull: false,
     validate: {
         notEmpty: true
@@ -72,16 +52,20 @@ const KustomSelesai = db.define("kustom_selesai", {
   pemesananId:{
       type: DataTypes.INTEGER,
       allowNull: false,
+      unique: {
+        name: "kustom_selesai_pemesananId_key",
+        msg: "Pemesanan ini sudah ditambahkan"
+      },
       validate:{
           notEmpty: true
       }
   }
-});
+}, { freezeTableName: true});
 
 Users.hasMany(KustomSelesai);
-KustomSelesai.belongsTo(Users, { foreignKey: "userId" });
+KustomSelesai.belongsTo(Users, { foreignKey: "userId", onDelete: "CASCADE" });
 
 Pemesanan.hasMany(KustomSelesai);
-KustomSelesai.belongsTo(Pemesanan, { foreignKey: "pemesananId" });
+KustomSelesai.belongsTo(Pemesanan, { foreignKey: "pemesananId", onDelete: "CASCADE" });
 
 export default KustomSelesai;
