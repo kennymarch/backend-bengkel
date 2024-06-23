@@ -34,7 +34,11 @@ export const getPemesananById = async(req, res) =>{
             where:{
                 uuid: req.params.uuid,
                 userId: req.userId
-            }
+            },
+            include:[{
+                model: User,
+                attributes:['name','email']
+            }],
         });
         if(!pemesanan) return res.status(404).json({msg: "Data tidak ditemukan"});
 
