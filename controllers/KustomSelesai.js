@@ -114,7 +114,7 @@ export const createKustomSelesai = async(req, res) =>{
                 uuid: pemesananUuid
             }
         });
-        if(!pemesanan) return res.status(404).json({msg: "Data produk tidak ditemukan!"})
+        if(!pemesanan) return res.status(404).json({msg: "Data custom tidak ditemukan!"})
     
         await KustomSelesai.create({
             harga_akhir,
